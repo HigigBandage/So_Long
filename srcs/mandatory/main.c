@@ -6,7 +6,7 @@
 /*   By: dfinn <dfinn@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 13:22:41 by dfinn             #+#    #+#             */
-/*   Updated: 2023/09/24 17:19:08 by dfinn            ###   ########.fr       */
+/*   Updated: 2023/09/27 21:35:51 by dfinn            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,19 @@ int handle_key_press(int keycode, void *param)
     return 0;
 }*/
 
+t_img   ft_new_sprite(void *mlx, char *path)
+{
+    t_img   img;
+    img.reference = mlx_xpm_file_to_image(mlx, path, &img.size.x, &img.size.y);
+    img.pixel = mlx_get_data_addr(&img.reference, &img.bit_per_pixel, &img.line_size, &img.endian);
+    return (img);
+}
+
 int main()
 {
-    t_data data;
+    t_program   program;
+    t_mlx       mlx;
+    t_data      data;
     data.mlx_ptr = mlx_init();
     if (!data.mlx_ptr)
         return (1);
@@ -57,11 +67,15 @@ int main()
             free(data.mlx_ptr);
         return 1;
     }
-
+    program.sprite = ft_new_sprite(program.mlx_ptr, "block.xpm");
+    program.sprite_pos.x = 0;
+    program.sprite_pos.y = 0;
+    mlx_put_image_to_window(program.mlx_ptr, program.window.reference, program.sprite.reference, program.sprite_pos.x, program.sprite_pos.y);
+    
     mlx_hook(data.win_ptr, 2, 0, handle_key_press, &data);
     //mlx_hook(data.win_ptr, 3, 0, handle_key_release, &data);
-
     mlx_loop(data.mlx_ptr);
+    //map_init(mlx.map, &mlx);
 
     return 0;
 }
